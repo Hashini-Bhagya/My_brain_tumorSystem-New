@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Brain Tumor Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .nav {
+            background-color: #343a40;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+        }
+        .nav a:hover {
+            background-color: #495057;
+        }
+        .user-info {
+            color: white;
+            padding: 0 20px;
+        }
+        .content {
+            padding: 30px;
+            background: white;
+            margin-top: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .welcome {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .feature-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        .feature-card h3 {
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Brain Tumor Detection System</h1>
+    </div>
+    
+    <div class="nav">
+        <div>
+            <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/api/dashboard">Dashboard</a>
+        </div>
+        <div class="user-info">
+            Welcome, {{ user.name }}! | 
+            <a href="{{ url_for('api.logout') }}">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="content">
+            <div class="welcome">
+                <h2>Welcome to your Dashboard, {{ user.name }}!</h2>
+                <p>Email: {{ user.email }}</p>
+            </div>
+            
+            <div class="features">
+                <div class="feature-card">
+                    <h3>Upload MRI Scan</h3>
+                    <p>Upload your brain MRI scan for tumor detection analysis</p>
+                    <p style="color: #6c757d; font-style: italic;">(Feature coming soon)</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>View Results</h3>
+                    <p>Check your previous scan results and reports</p>
+                    <p style="color: #6c757d; font-style: italic;">(Feature coming soon)</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Profile Settings</h3>
+                    <p>Update your personal information and preferences</p>
+                    <p style="color: #6c757d; font-style: italic;">(Feature coming soon)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,8 +1,19 @@
+
+<!-- templates/home.html -->
 {% extends "base.html" %}
 
 {% block title %}Home Page{% endblock %}
 
 {% block content %}
-    <h1>Welcome to the Home Page!</h1>
-    <p>This is the main content of the home page.</p>
+<div class="container">
+    <h1>Welcome to Brain Tumor Detection System</h1>
+    <p>This is the home page of our application.</p>
+    
+    {% if current_user.is_authenticated %}
+        <p>Hello, {{ current_user.name }}! You are logged in.</p>
+        <a href="{{ url_for('api.dashboard') }}" class="btn btn-primary">Go to Dashboard</a>
+    {% else %}
+        <p>Please <a href="{{ url_for('api.login') }}">login</a> or <a href="{{ url_for('api.register') }}">register</a> to continue.</p>
+    {% endif %}
+</div>
 {% endblock %}
