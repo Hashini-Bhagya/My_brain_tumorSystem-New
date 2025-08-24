@@ -20,7 +20,11 @@ class UserController:
                 age=user_data.get('age'),
                 gender=user_data.get('gender')
             )
-            new_user.set_password(user_data['password'])
+           # new_user.set_password(user_data['password'])
+             #for google auth
+            # Only set password if provided (not for OAuth users)
+            if user_data.get('password'):
+                new_user.set_password(user_data['password'])
             
             db.session.add(new_user)
             db.session.commit()
@@ -35,8 +39,13 @@ class UserController:
     def authenticate_user(email, password):
         try:
             user = User.query.filter_by(email=email).first()
-            if user and user.check_password(password):
-                return user, "Login successful"
+            if user:
+                # For OAuth users without password
+                if user.password_hash is None:
+                    return None, "Please use Google to sign in"
+                
+                if user.check_password(password):
+                    return user, "Login successful"
             return None, "Invalid email or password"
         except Exception as e:
             return None, f"Error during authentication: {str(e)}"

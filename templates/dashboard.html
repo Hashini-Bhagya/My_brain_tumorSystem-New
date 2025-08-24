@@ -69,6 +69,82 @@
             color: #007bff;
             margin-bottom: 15px;
         }
+        .upload-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+        
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn:hover {
+            background-color: #0069d9;
+        }
+        
+        .alert {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .preview-container {
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
     </style>
 </head>
 <body>
@@ -94,6 +170,39 @@
                 <h2>Welcome to your Dashboard, {{ user.name }}!</h2>
                 <p>Email: {{ user.email }}</p>
             </div>
+
+           <!-- Add this to your existing dashboard.html -->
+<div class="upload-section">
+    <h3>Brain Tumor Detection</h3>
+    
+    <!-- Step 1: Upload MRI Scan -->
+    <div class="upload-step">
+        <h4>Step 1: Upload MRI Scan</h4>
+        <form id="uploadForm" class="upload-form" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="mriScan">Select MRI Image:</label>
+                <input type="file" id="mriScan" name="file" accept="image/*" required>
+            </div>
+            <button type="submit" class="btn">Upload Image</button>
+        </form>
+    </div>
+    
+    <!-- Step 2: Analyze (hidden until upload is complete) -->
+    <div class="analyze-step" style="display: none; margin-top: 30px;">
+        <h4>Step 2: Analyze Scan</h4>
+        <div id="uploadedImagePreview" class="preview-container">
+            <img id="uploadedPreviewImage" class="preview-image" src="" alt="Uploaded MRI Scan">
+        </div>
+        <button id="analyzeBtn" class="btn" style="margin-top: 15px;">Analyze for Tumors</button>
+    </div>
+    
+    <div id="message" class="alert" style="display: none;"></div>
+    
+    <div id="results" style="margin-top: 20px; display: none;">
+        <h4>Analysis Results:</h4>
+        <div id="resultContent"></div>
+    </div>
+</div>
             
             <div class="features">
                 <div class="feature-card">
@@ -116,5 +225,142 @@
             </div>
         </div>
     </div>
+        <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const uploadForm = document.getElementById('uploadForm');
+        const analyzeStep = document.querySelector('.analyze-step');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const messageDiv = document.getElementById('message');
+        const uploadedPreview = document.getElementById('uploadedPreviewImage');
+        const fileInput = document.getElementById('mriScan');
+        const resultsDiv = document.getElementById('results');
+        const resultContent = document.getElementById('resultContent');
+        
+        let currentAnalysisId = null;
+        
+        // Preview image when selected
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedPreview.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Handle upload form submission
+        uploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            
+            // Show loading message
+            showMessage('Uploading image...', 'info');
+            
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('Upload successful! Click "Analyze" to process the image.', 'success');
+                    currentAnalysisId = data.analysis_id;
+                    analyzeStep.style.display = 'block';
+                    uploadedPreview.src = data.image_url;
+                } else {
+                    showMessage(`Error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showMessage('Network error. Please try again.', 'error');
+            }
+        });
+        
+        // Handle analyze button click
+        analyzeBtn.addEventListener('click', async function() {
+            if (!currentAnalysisId) {
+                showMessage('Please upload an image first.', 'error');
+                return;
+            }
+            
+            showMessage('Analyzing image... This may take a moment.', 'info');
+            
+            try {
+                const response = await fetch(`/api/analyze/${currentAnalysisId}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('Analysis complete!', 'success');
+                    displayResults(data);
+                } else {
+                    showMessage(`Error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showMessage('Network error. Please try again.', 'error');
+            }
+        });
+        
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `alert alert-${type}`;
+            messageDiv.style.display = 'block';
+        }
+        
+        function displayResults(data) {
+            const analysis = data.analysis;
+            let resultHTML = '';
+            
+            if (analysis.has_tumor) {
+                resultHTML = `
+                    <div style="color: #dc3545; font-weight: bold;">
+                        <p>🚨 Tumor Detected: ${analysis.tumor_type.toUpperCase()}</p>
+                        <p>Confidence: ${(analysis.confidence * 100).toFixed(2)}%</p>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <h5>Probability Breakdown:</h5>
+                        <ul>
+                            <li>Glioma: ${(analysis.probabilities.glioma * 100).toFixed(2)}%</li>
+                            <li>Meningioma: ${(analysis.probabilities.meningioma * 100).toFixed(2)}%</li>
+                            <li>No Tumor: ${(analysis.probabilities.notumor * 100).toFixed(2)}%</li>
+                            <li>Pituitary: ${(analysis.probabilities.pituitary * 100).toFixed(2)}%</li>
+                        </ul>
+                    </div>
+                `;
+            } else {
+                resultHTML = `
+                    <div style="color: #28a745; font-weight: bold;">
+                        <p>✅ No Tumor Detected</p>
+                        <p>Confidence: ${(analysis.confidence * 100).toFixed(2)}%</p>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <h5>Probability Breakdown:</h5>
+                        <ul>
+                            <li>Glioma: ${(analysis.probabilities.glioma * 100).toFixed(2)}%</li>
+                            <li>Meningioma: ${(analysis.probabilities.meningioma * 100).toFixed(2)}%</li>
+                            <li>No Tumor: ${(analysis.probabilities.notumor * 100).toFixed(2)}%</li>
+                            <li>Pituitary: ${(analysis.probabilities.pituitary * 100).toFixed(2)}%</li>
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            resultHTML += `
+                <p style="margin-top: 15px;"><strong>Image stored at:</strong> <a href="${analysis.image_url}" target="_blank">View Original Image</a></p>
+            `;
+            
+            resultContent.innerHTML = resultHTML;
+            resultsDiv.style.display = 'block';
+        }
+    });
+</script>
+
 </body>
 </html>

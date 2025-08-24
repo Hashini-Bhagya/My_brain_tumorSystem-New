@@ -141,6 +141,15 @@
             </div>
             
             <button type="submit" class="btn">Login</button>
+
+            <div style="text-align: center; margin: 20px 0;">
+              <p>Or sign in with:</p>
+              <a href="{{ url_for('api.google_login') }}" 
+               style="display: inline-block; background: #DB4437; color: white; 
+              padding: 10px 20px; border-radius: 4px; text-decoration: none;">
+                  Google
+                      </a>
+                            </div>
             
             <div class="links">
                 <p>Don't have an account? <a href="{{ url_for('api.register') }}">Register here</a></p>
