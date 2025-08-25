@@ -4,6 +4,10 @@ from flask_login import login_user
 from urllib.parse import urlencode
 from src.controllers.user_controller import UserController
 import json
+from config import Config
+
+GOOGLE_CLIENT_ID = Config.GOOGLE_CLIENT_ID
+GOOGLE_CLIENT_SECRET = Config.GOOGLE_CLIENT_SECRET
 
 # HARDCODED VALUES - REPLACE WITH YOUR ACTUAL VALUES
 GOOGLE_CLIENT_ID = "441128910074-fpqe3k8eo6i8g54rcfp2c12eisrq6ssc.apps.googleusercontent.com"
@@ -30,9 +34,10 @@ class GoogleOAuth:
             client_id = GOOGLE_CLIENT_ID
             print(f"DEBUG: Using Client ID: {client_id}")
             
-            if not client_id or '441128910074-fpqe3k8eo6i8g54rcfp2c12eisrq6ssc.apps.googleusercontent.com' in client_id:
-                flash("Google authentication is not properly configured", "error")
-                return redirect(url_for("api.login"))
+            if not client_id:
+             flash("Google authentication is not configured", "error")
+             return redirect(url_for("api.login"))
+
             
             google_provider_cfg = GoogleOAuth.get_google_provider_cfg()
             if not google_provider_cfg:

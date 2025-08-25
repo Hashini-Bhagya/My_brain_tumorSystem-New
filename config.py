@@ -33,8 +33,9 @@ class Config:
 
     #for google auth
     # Google OAuth Configuration
-    GOOGLE_CLIENT_ID = os.environ.get('441128910074-fpqe3k8eo6i8g54rcfp2c12eisrq6ssc.apps.googleusercontent.com')
-    GOOGLE_CLIENT_SECRET = os.environ.get('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')
+    GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
+    GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
+
     
     # Debug configuration
     DEBUG = True
