@@ -199,6 +199,84 @@
             color: #2d3e50;
         }
         
+         /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 70px 0 30px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .footer-col h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #334155;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
         @media (max-width: 768px) {
             .navbar {
                 padding: 1rem;
@@ -254,10 +332,11 @@
 
         <ul class="nav-links">
             <li><a href="{{ url_for('main.home') }}">Home</a></li>
-            <li><a href="#">Features</a></li>
-            <li><a href="#">How It Works</a></li>
             <li><a href="{{ url_for('main.about') }}">About</a></li>
             <li><a href="#">Contact</a></li>
+            <li><a href="#">Features</a></li>
+            <li><a href="#">How It Works</a></li>
+           
 
             <li id="authSection">
                 <!-- This will be populated by JavaScript based on login status -->
@@ -270,6 +349,61 @@
     <main>
         {% block content %}{% endblock %}
     </main>
+     {% block footer %}
+     <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>NeuroScan AI</h3>
+                    <p style="color: #94a3b8; margin-top: 20px;">Advanced AI technology for brain tumor detection and analysis.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('main.home') }}">Home</a></li>
+                        <li><a href="#">Diagnosis</a></li>
+                        <li><a href="#">How It Works</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Research Papers</a></li>
+                        <li><a href="#">Case Studies</a></li>
+                        <li><a href="#">Medical Info</a></li>
+                        <li><a href="#">FAQs</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Contact Us</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-envelope"></i> kavindihashini15@gmail.com</li>
+                        <li><i class="fas fa-phone"></i> 071-2494773</li>
+                        <li><i class="fas fa-map-marker-alt"></i> NeuroScan, No-123 , Colombo</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2025 NeuroScan AI. All rights reserved. HIPAA Compliant | Privacy Policy | Terms of Service
+            </div>
+        </div>
+    </footer>
+    {% endblock %}
+
     <script>
         // Simple JavaScript for mobile menu toggle
         document.addEventListener('DOMContentLoaded', function() {
