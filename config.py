@@ -31,6 +31,9 @@ class Config:
     CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY') or '445723323224991'
     CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET') or 'dyaqAdlHIf9jZufLgpY4Xv38xxg'
 
+    # Gemini AI configuration
+    GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
+
     #for google auth
     # Google OAuth Configuration
     GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")

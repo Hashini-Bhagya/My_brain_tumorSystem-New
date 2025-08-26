@@ -10,6 +10,7 @@ import os
 from werkzeug.utils import secure_filename
 from src.cnn.predict import tumor_detector 
 from src.models.analysis import AnalysisResult 
+from src.utils.gemini import get_tumor_info_from_gemini
 
 api_bp = Blueprint('api', __name__)
 
@@ -213,6 +214,30 @@ def get_analysis(analysis_id):
         'success': True,
         'analysis': analysis_record.to_dict()
     }), 200
+
+#tumor details ganna kotasa 
+
+@api_bp.route('/tumor-info/<tumor_type>', methods=['GET'])
+@login_required
+def get_tumor_info(tumor_type):
+    """Get detailed information about a tumor type from Gemini AI"""
+    if tumor_type not in ['glioma', 'meningioma', 'pituitary', 'notumor']:
+        return jsonify({'error': 'Invalid tumor type'}), 400
+    
+    try:
+        # Get information from Gemini AI
+        tumor_info = get_tumor_info_from_gemini(tumor_type)
+        
+        return jsonify({
+            'success': True,
+            'tumor_type': tumor_type,
+            'information': tumor_info
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'error': f'Failed to get tumor information: {str(e)}'
+        }), 500
 
 #google auth
 @api_bp.route('/login/google')

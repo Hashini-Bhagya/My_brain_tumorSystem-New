@@ -8,17 +8,38 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
+         :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0ea5e9;
+            --accent: #8b5cf6;
+            --light: #f0f9ff;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gradient-start: #4361ee;
+            --gradient-end: #3a0ca3;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background-color: #f8f9fa;
-            color: #333;
+            font-family: 'Open Sans', sans-serif;
+            color: var(--dark);
+            background-color: #f8fafc;
             line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
         }
         
         .navbar {
@@ -38,27 +59,24 @@
             align-items: center;
             font-size: 1.8rem;
             font-weight: 700;
-            color: #2d3e50;
+            color: var(--dark);
             text-decoration: none;
         }
         
         .logo-accent {
-            color: #4285f4;
+            color: var(--primary);
         }
         
         .nav-links {
             display: flex;
             list-style: none;
             align-items: center;
-        }
-        
-        .nav-links li {
-            margin-left: 2.5rem;
+            gap: 2rem;
         }
         
         .nav-links a {
             text-decoration: none;
-            color: #2d3e50;
+            color: var(--dark);
             font-weight: 500;
             font-size: 1.1rem;
             transition: all 0.3s ease;
@@ -67,7 +85,7 @@
         }
         
         .nav-links a:hover {
-            color: #4285f4;
+            color: var(--primary);
         }
         
         .nav-links a::after {
@@ -77,7 +95,7 @@
             height: 2px;
             bottom: 0;
             left: 0;
-            background-color: #4285f4;
+            background-color: var(--primary);
             transition: width 0.3s ease;
         }
         
@@ -88,6 +106,7 @@
         .auth-buttons {
             display: flex;
             gap: 1rem;
+            align-items: center;
         }
         
         .btn {
@@ -99,95 +118,42 @@
         }
         
         .btn-outline {
-            border: 2px solid #4285f4;
-            color: #4285f4;
+            border: 2px solid var(--primary);
+            color: var(--primary);
             background: transparent;
         }
         
         .btn-outline:hover {
-            background: #4285f4;
+            background: var(--primary);
             color: white;
         }
         
         .btn-primary {
-            background: #4285f4;
+            background: var(--primary);
             color: white;
-            border: 2px solid #4285f4;
+            border: 2px solid var(--primary);
         }
         
         .btn-primary:hover {
-            background: #3367d6;
-            border-color: #3367d6;
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
         }
         
         .user-info {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: #2d3e50;
+            color: var(--dark);
             font-weight: 500;
         }
         
         .user-info a {
-            color: #4285f4;
+            color: var(--primary);
             text-decoration: none;
         }
         
         .user-info a:hover {
             text-decoration: underline;
-        }
-        
-        .content {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 20px;
-        }
-        
-        .hero {
-            text-align: center;
-            padding: 4rem 0;
-        }
-        
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #2d3e50;
-        }
-        
-        .hero p {
-            font-size: 1.2rem;
-            color: #666;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 4rem 0;
-        }
-        
-        .feature-card {
-            background: white;
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .feature-card h3 {
-            color: #2d3e50;
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-        
-        .feature-card p {
-            color: #666;
         }
         
         .mobile-menu-btn {
@@ -196,7 +162,50 @@
             background: none;
             border: none;
             cursor: pointer;
-            color: #2d3e50;
+            color: var(--dark);
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: #fff;
+                padding: 1rem;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                z-index: 1000;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links li {
+                margin: 1rem 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+                gap: 0.5rem;
+                margin-top: 1rem;
+            }
+            
+            .auth-buttons .btn {
+                width: 100%;
+                text-align: center;
+            }
         }
         
          /* Footer */
@@ -337,9 +346,18 @@
             <li><a href="#">Features</a></li>
             <li><a href="#">How It Works</a></li>
            
-
-            <li id="authSection">
-                <!-- This will be populated by JavaScript based on login status -->
+            <li class="auth-section">
+                {% if current_user.is_authenticated %}
+                    <div class="user-info">
+                        <i class="fas fa-user-circle"></i> {{ current_user.name }} | 
+                        <a href="{{ url_for('api.logout') }}">Logout</a>
+                    </div>
+                {% else %}
+                    <div class="auth-buttons">
+                        <a href="{{ url_for('api.login') }}" class="btn btn-outline">Login</a>
+                        <a href="{{ url_for('api.register') }}" class="btn btn-primary">Sign Up</a>
+                    </div>
+                {% endif %}
             </li>
         </ul>
 
