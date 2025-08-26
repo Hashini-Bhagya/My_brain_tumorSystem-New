@@ -1,8 +1,543 @@
 {% extends "base.html" %}
 
-{% block title %}About Page{% endblock %}
+{% block title %}About Us - NeuroScan AI{% endblock %}
 
 {% block content %}
-    <h1>About Us</h1>
-    <p>Learn more about our company.</p>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<style>
+    :root {
+        --primary: #2563eb;
+        --primary-dark: #1d4ed8;
+        --secondary: #0ea5e9;
+        --accent: #8b5cf6;
+        --light: #f0f9ff;
+        --dark: #0f172a;
+        --gray: #64748b;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --gradient-start: #4361ee;
+        --gradient-end: #3a0ca3;
+    }
+
+    .about-hero {
+        background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+        padding: 100px 0;
+        color: white;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .about-hero::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 400px;
+        height: 400px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .about-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -150px;
+        left: -100px;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .about-hero-content {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .about-hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 20px;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .about-hero p {
+        font-size: 1.3rem;
+        opacity: 0.9;
+        margin-bottom: 30px;
+    }
+
+    .mission-section {
+        padding: 0 20px;
+        background-color: white;
+    }
+
+    .mission-content {
+        display: flex;
+        align-items: center;
+        gap: 60px;
+    }
+
+    .mission-text {
+        flex: 1;
+    }
+
+    .mission-image {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+    }
+
+    .mission-text h2 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: var(--dark);
+    }
+
+    .mission-text p {
+        font-size: 1.2rem;
+        color: var(--gray);
+        line-height: 1.7;
+        margin-bottom: 30px;
+    }
+
+    .ai-brain {
+        width: 100%;
+        max-width: 400px;
+        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+    }
+
+    .team-section {
+        padding: 0 20px;
+        background: linear-gradient(to bottom, #f0f9ff, #e0f2fe);
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .section-title h2 {
+        font-size: 2.8rem;
+        color: var(--dark);
+        margin-bottom: 15px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .section-title h2::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(to right, var(--primary), var(--accent));
+        border-radius: 2px;
+    }
+
+    .section-title p {
+        color: var(--gray);
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 20px auto 0;
+    }
+
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+    }
+
+    .team-card {
+        background-color: white;
+        border-radius: 16px;
+        padding: 30px;
+        text-align: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .team-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .team-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+        font-weight: bold;
+    }
+
+    .team-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: var(--dark);
+    }
+
+    .team-card .role {
+        color: var(--primary);
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .team-card p {
+        color: var(--gray);
+        line-height: 1.7;
+    }
+
+    .values-section {
+        padding: 0 20px;
+        background-color: white;
+    }
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+    }
+
+    .value-card {
+        background-color: white;
+        border-radius: 16px;
+        padding: 40px 30px;
+        text-align: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .value-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(to right, var(--primary), var(--accent));
+    }
+
+    .value-icon {
+        width: 90px;
+        height: 90px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 25px;
+        font-size: 2.2rem;
+        color: white;
+    }
+
+    .value-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        color: var(--dark);
+    }
+
+    .value-card p {
+        color: var(--gray);
+        line-height: 1.7;
+    }
+
+    .technology-section {
+       padding: 0 20px;
+        background: linear-gradient(to bottom, #f8fafc, #f0f9ff);
+    }
+
+    .tech-content {
+        display: flex;
+        align-items: center;
+        gap: 60px;
+    }
+
+    .tech-text {
+        flex: 1;
+    }
+
+    .tech-image {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+    }
+
+    .tech-text h2 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: var(--dark);
+    }
+
+    .tech-text p {
+        font-size: 1.2rem;
+        color: var(--gray);
+        line-height: 1.7;
+        margin-bottom: 30px;
+    }
+
+    .tech-features {
+        list-style: none;
+    }
+
+    .tech-features li {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        font-size: 1.1rem;
+    }
+
+    .tech-features i {
+        color: var(--primary);
+        font-size: 1.3rem;
+    }
+
+    .stats-section {
+        padding: 80px 0;
+        background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+        color: white;
+        text-align: center;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        margin-top: 50px;
+    }
+
+    .stat-item {
+        padding: 30px;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .stat-label {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+
+    @media (max-width: 992px) {
+        .mission-content,
+        .tech-content {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .mission-text,
+        .tech-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .about-hero h1 {
+            font-size: 2.8rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2.2rem;
+        }
+        
+        .mission-text h2,
+        .tech-text h2 {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="about-hero">
+    <div class="about-hero-content" data-aos="fade-up" data-aos-duration="1000">
+        <h1>Revolutionizing Brain Tumor Detection</h1>
+        <p>At NeuroScan AI, we're combining cutting-edge artificial intelligence with medical expertise to transform how brain tumors are detected and diagnosed.</p>
+    </div>
+</section>
+
+<!-- Mission Section -->
+<section class="mission-section">
+    <div class="container">
+        <div class="mission-content">
+            <div class="mission-text" data-aos="fade-right" data-aos-duration="800">
+                <h2>Our Mission</h2>
+                <p>NeuroScan AI was founded with a singular mission: to make accurate brain tumor detection accessible to everyone, everywhere. We believe that early and precise diagnosis can save lives and improve treatment outcomes.</p>
+                <p>Our team of AI researchers, neurologists, and software engineers have developed a platform that leverages deep learning algorithms to analyze MRI scans with unprecedented accuracy, helping medical professionals make more informed decisions.</p>
+            </div>
+            <div class="mission-image" data-aos="fade-left" data-aos-duration="800" data-aos-delay="300">
+                <div class="ai-brain">
+                    <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="rgba(37, 99, 235, 0.15)" d="M250,50 C350,30 450,80 450,180 C450,280 350,330 250,350 C150,330 50,280 50,180 C50,80 150,30 250,50 Z"></path>
+                        <circle cx="200" cy="150" r="40" fill="rgba(37, 99, 235, 0.2)"></circle>
+                        <circle cx="300" cy="150" r="40" fill="rgba(37, 99, 235, 0.2)"></circle>
+                        <path fill="rgba(37, 99, 235, 0.25)" d="M200,200 Q250,250 300,200 L300,280 Q250,330 200,280 Z"></path>
+                        <path fill="rgba(37, 99, 235, 0.3)" d="M180,180 Q220,220 250,200 Q280,220 320,180 L300,150 L200,150 Z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-item" data-aos="fade-up" data-aos-duration="800">
+                <div class="stat-number">98%</div>
+                <div class="stat-label">Accuracy Rate</div>
+            </div>
+            <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
+                <div class="stat-number">5,000+</div>
+                <div class="stat-label">Scans Analyzed</div>
+            </div>
+            <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+                <div class="stat-number">10x</div>
+                <div class="stat-label">Faster Diagnosis</div>
+            </div>
+            <div class="stat-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Availability</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="team-section">
+    <div class="container">
+        <div class="section-title" data-aos="fade-up" data-aos-duration="800">
+            <h2>Our Expert Team</h2>
+            <p>Bringing together world-class talent in AI, neurology, and medical imaging</p>
+        </div>
+        
+        <div class="team-grid">
+            <div class="team-card" data-aos="fade-up" data-aos-duration="800">
+                <div class="team-avatar">SJ</div>
+                <h3>Dr. Sarah Johnson</h3>
+                <div class="role">Chief Medical Officer</div>
+                <p>Board-certified neurologist with over 15 years of experience in neuro-oncology and diagnostic imaging.</p>
+            </div>
+            
+            <div class="team-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
+                <div class="team-avatar">RC</div>
+                <h3>Robert Chen</h3>
+                <div class="role">Lead AI Researcher</div>
+                <p>PhD in Computer Vision with expertise in medical image analysis and deep learning architectures.</p>
+            </div>
+            
+            <div class="team-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+                <div class="team-avatar">DP</div>
+                <h3>Dr. David Patel</h3>
+                <div class="role">Head of Radiology</div>
+                <p>Radiologist specializing in neuroradiology with extensive experience in MRI interpretation.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Values Section -->
+<section class="values-section">
+    <div class="container">
+        <div class="section-title" data-aos="fade-up" data-aos-duration="800">
+            <h2>Our Core Values</h2>
+            <p>The principles that guide everything we do</p>
+        </div>
+        
+        <div class="values-grid">
+            <div class="value-card" data-aos="fade-up" data-aos-duration="800">
+                <div class="value-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h3>Patient-Centered</h3>
+                <p>Every decision we make is guided by what's best for patients and their families.</p>
+            </div>
+            
+            <div class="value-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
+                <div class="value-icon">
+                    <i class="fas fa-flask"></i>
+                </div>
+                <h3>Scientific Excellence</h3>
+                <p>We maintain the highest standards of scientific rigor in our research and development.</p>
+            </div>
+            
+            <div class="value-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+                <div class="value-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Privacy & Security</h3>
+                <p>We implement robust security measures to protect sensitive medical data.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Technology Section -->
+<section class="technology-section">
+    <div class="container">
+        <div class="tech-content">
+            <div class="tech-text" data-aos="fade-right" data-aos-duration="800">
+                <h2>Advanced AI Technology</h2>
+                <p>Our platform utilizes state-of-the-art convolutional neural networks specifically designed for medical image analysis. Trained on thousands of validated MRI scans, our models can detect subtle patterns indicative of brain tumors with remarkable accuracy.</p>
+                
+                <ul class="tech-features">
+                    <li><i class="fas fa-check-circle"></i> Deep learning algorithms optimized for medical imaging</li>
+                    <li><i class="fas fa-check-circle"></i> Continuous learning from new data while maintaining privacy</li>
+                    <li><i class="fas fa-check-circle"></i> Explainable AI that provides insights into detection rationale</li>
+                    <li><i class="fas fa-check-circle"></i> HIPAA-compliant data handling and processing</li>
+                </ul>
+            </div>
+            <div class="tech-image" data-aos="fade-left" data-aos-duration="800" data-aos-delay="300">
+                <div class="ai-brain">
+                    <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="rgba(139, 92, 246, 0.15)" d="M250,50 C350,30 450,80 450,180 C450,280 350,330 250,350 C150,330 50,280 50,180 C50,80 150,30 250,50 Z"></path>
+                        <circle cx="200" cy="150" r="40" fill="rgba(139, 92, 246, 0.2)"></circle>
+                        <circle cx="300" cy="150" r="40" fill="rgba(139, 92, 246, 0.2)"></circle>
+                        <path fill="rgba(139, 92, 246, 0.25)" d="M200,200 Q250,250 300,200 L300,280 Q250,330 200,280 Z"></path>
+                        <path fill="rgba(139, 92, 246, 0.3)" d="M180,180 Q220,220 250,200 Q280,220 320,180 L300,150 L200,150 Z"></path>
+                        <path fill="rgba(139, 92, 246, 0.4)" d="M220,220 Q250,270 280,220" stroke="rgba(139, 92, 246, 0.6)" stroke-width="3"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+    });
+</script>
+{% endblock %}
+
+{% block footer %}
+<!-- Import the footer content -->
+{% include "footer.html" %}
 {% endblock %}

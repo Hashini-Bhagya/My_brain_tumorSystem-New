@@ -1,120 +1,885 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Brain Tumor Detection</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
+{% extends "base.html" %}
+
+{% block title %}Dashboard - NeuroScan AI{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary: #2563eb;
+        --primary-dark: #1d4ed8;
+        --secondary: #0ea5e9;
+        --accent: #8b5cf6;
+        --light: #f0f9ff;
+        --dark: #0f172a;
+        --gray: #64748b;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --gradient-start: #4361ee;
+        --gradient-end: #3a0ca3;
+    }
+
+    .dashboard-hero {
+        background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+        padding: 60px 0;
+        color: white;
+        text-align: center;
+    }
+
+    .dashboard-hero h1 {
+        font-size: 2.8rem;
+        margin-bottom: 15px;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .dashboard-hero p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .dashboard-content {
+        padding: 40px 0;
+        background-color: #f8fafc;
+        min-height: calc(100vh - 200px);
+    }
+
+    .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .welcome-card {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .welcome-card h2 {
+        color: var(--dark);
+        margin-bottom: 10px;
+        font-size: 1.8rem;
+    }
+
+    .welcome-card p {
+        color: var(--gray);
+        margin-bottom: 20px;
+    }
+
+    .user-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-weight: 600;
+    }
+
+    .upload-section {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        margin-bottom: 25px;
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+    .section-title h3 {
+        font-size: 1.5rem;
+        color: var(--dark);
+        margin-bottom: 10px;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(to right, var(--primary), var(--accent));
+        border-radius: 2px;
+    }
+
+    .upload-step {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .upload-step:last-child {
+        border-bottom: none;
+    }
+
+    .upload-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .form-group label {
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    .file-input-container {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .file-input {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    .file-input-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 12px 20px;
+        background: #f1f5f9;
+        color: var(--dark);
+        border: 2px dashed #cbd5e1;
+        border-radius: 8px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .file-input-button:hover {
+        background: #e2e8f0;
+        border-color: var(--primary);
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-outline {
+        background: transparent;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+    }
+
+    .btn-outline:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    .preview-container {
+        margin-top: 20px;
+        display: none;
+        text-align: center;
+    }
+
+    .preview-image {
+        max-width: 100%;
+        max-height: 300px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .alert {
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    .alert-info {
+        background-color: #dbeafe;
+        color: #1e40af;
+        border: 1px solid #93c5fd;
+    }
+
+    .alert-success {
+        background-color: #dcfce7;
+        color: #166534;
+        border: 1px solid #86efac;
+    }
+
+    .alert-error {
+        background-color: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fca5a5;
+    }
+
+    #results {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        margin-top: 30px;
+        display: none;
+    }
+
+    .result-positive {
+        border-left: 5px solid var(--danger);
+    }
+
+    .result-negative {
+        border-left: 5px solid var(--success);
+    }
+
+    .result-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .result-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+    }
+
+    .positive-icon {
+        background-color: #fee2e2;
+        color: var(--danger);
+    }
+
+    .negative-icon {
+        background-color: #dcfce7;
+        color: var(--success);
+    }
+
+    .probability-chart {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .probability-item {
+        background: #f8fafc;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .probability-label {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 8px;
+    }
+
+    .probability-value {
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 1.8rem;
+        color: white;
+    }
+
+    .feature-card h3 {
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+        color: var(--dark);
+    }
+
+    .feature-card p {
+        color: var(--gray);
+        line-height: 1.6;
+    }
+
+    .coming-soon {
+        display: inline-block;
+        background: #fef3c7;
+        color: #92400e;
+        padding: 4px 10px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-top: 10px;
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+        background-color: white;
+        margin: 5% auto;
+        padding: 30px;
+        border-radius: 16px;
+        width: 80%;
+        max-width: 800px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        position: relative;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .modal-title {
+        margin: 0;
+        color: var(--dark);
+        font-size: 1.5rem;
+    }
+
+    .close-modal {
+        font-size: 28px;
+        font-weight: bold;
+        color: var(--gray);
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+
+    .close-modal:hover {
+        color: var(--dark);
+    }
+
+    .modal-body {
+        line-height: 1.6;
+    }
+
+    .modal-body h1, .modal-body h2, .modal-body h3 {
+        color: var(--dark);
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .modal-body p {
+        margin-bottom: 1rem;
+        color: var(--gray);
+    }
+
+    .modal-body strong {
+        color: var(--dark);
+        font-weight: 600;
+    }
+
+    .modal-body ul, .modal-body ol {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+    }
+
+    .modal-body li {
+        margin-bottom: 0.5rem;
+        color: var(--gray);
+    }
+
+    .loading-spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+    }
+
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-left-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-hero h1 {
+            font-size: 2.2rem;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        
+        .probability-chart {
+            grid-template-columns: 1fr;
+        }
+
+        .modal-content {
+            width: 90%;
+            margin: 10% auto;
             padding: 20px;
         }
-        .header {
-            background-color: #007bff;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        .nav {
-            background-color: #343a40;
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .nav a {
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-        }
-        .nav a:hover {
-            background-color: #495057;
-        }
-        .user-info {
-            color: white;
-            padding: 0 20px;
-        }
-        .content {
-            padding: 30px;
-            background: white;
-            margin-top: 20px;
-            border-radius: 5px;
-            text-align: center;
-        }
-        .welcome {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #333;
-        }
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-        .feature-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #dee2e6;
-        }
-        .feature-card h3 {
-            color: #007bff;
-            margin-bottom: 15px;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>Brain Tumor Detection System</h1>
-    </div>
-    
-    <div class="nav">
-        <div>
-            <a href="/">Home</a>
-            <a href="/about">About</a>
-            <a href="/api/dashboard">Dashboard</a>
-        </div>
-        <div class="user-info">
-            Welcome, {{ user.name }}! | 
-            <a href="{{ url_for('api.logout') }}">Logout</a>
-        </div>
-    </div>
-    
+    }
+</style>
+
+<!-- Dashboard Hero Section -->
+<section class="dashboard-hero">
     <div class="container">
-        <div class="content">
-            <div class="welcome">
-                <h2>Welcome to your Dashboard, {{ user.name }}!</h2>
-                <p>Email: {{ user.email }}</p>
+        <h1>Medical Dashboard</h1>
+        <p>Advanced brain tumor detection and analysis platform</p>
+    </div>
+</section>
+
+<!-- Dashboard Content -->
+<section class="dashboard-content">
+    <div class="container">
+        <!-- Welcome Card -->
+        <div class="welcome-card">
+            <h2>Welcome, {{ user.name }}!</h2>
+            <p>You can upload and analyze MRI scans for tumor detection</p>
+            <div class="user-badge">
+                <i class="fas fa-user-md"></i> {{ user.email }}
+            </div>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <div class="section-title">
+                <h3>Brain Tumor Detection</h3>
+                <p>Upload and analyze MRI scans with our AI technology</p>
             </div>
             
-            <div class="features">
-                <div class="feature-card">
-                    <h3>Upload MRI Scan</h3>
-                    <p>Upload your brain MRI scan for tumor detection analysis</p>
-                    <p style="color: #6c757d; font-style: italic;">(Feature coming soon)</p>
+            <!-- Step 1: Upload MRI Scan -->
+            <div class="upload-step">
+                <h4>Step 1: Upload MRI Scan</h4>
+                <form id="uploadForm" class="upload-form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="mriScan">Select MRI Image:</label>
+                        <div class="file-input-container">
+                            <div class="file-input-button">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Choose MRI Image</span>
+                            </div>
+                            <input type="file" class="file-input" id="mriScan" name="file" accept="image/*" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> Upload Image
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Step 2: Analyze (hidden until upload is complete) -->
+            <div class="upload-step analyze-step" style="display: none;">
+                <h4>Step 2: Analyze Scan</h4>
+                <div id="uploadedImagePreview" class="preview-container">
+                    <img id="uploadedPreviewImage" class="preview-image" src="" alt="Uploaded MRI Scan">
                 </div>
-                
-                <div class="feature-card">
-                    <h3>View Results</h3>
-                    <p>Check your previous scan results and reports</p>
-                    <p style="color: #6c757d; font-style: italic;">(Feature coming soon)</p>
+                <button id="analyzeBtn" class="btn btn-primary" style="margin-top: 15px;">
+                    <i class="fas fa-search"></i> Analyze for Tumors
+                </button>
+            </div>
+            
+            <div id="message" class="alert" style="display: none;"></div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results">
+            <div class="result-header">
+                <div id="resultIcon" class="result-icon"></div>
+                <div>
+                    <h3 id="resultTitle">Analysis Results</h3>
+                    <p id="resultSubtitle">Detailed findings from your MRI scan</p>
                 </div>
-                
-                <div class="feature-card">
-                    <h3>Profile Settings</h3>
-                    <p>Update your personal information and preferences</p>
-                    <p style="color: #6c757d; font-style: italic;">(Feature coming soon)</p>
+            </div>
+            
+            <div id="resultContent"></div>
+            
+            <div class="probability-chart">
+                <div class="probability-item">
+                    <div class="probability-label">Glioma</div>
+                    <div id="gliomaProbability" class="probability-value">0%</div>
+                </div>
+                <div class="probability-item">
+                    <div class="probability-label">Meningioma</div>
+                    <div id="meningiomaProbability" class="probability-value">0%</div>
+                </div>
+                <div class="probability-item">
+                    <div class="probability-label">No Tumor</div>
+                    <div id="notumorProbability" class="probability-value">0%</div>
+                </div>
+                <div class="probability-item">
+                    <div class="probability-label">Pituitary</div>
+                    <div id="pituitaryProbability" class="probability-value">0%</div>
+                </div>
+            </div>
+            
+            <!-- More Info Button -->
+            <div style="margin-top: 20px; text-align: center;">
+                <button id="moreInfoBtn" class="btn btn-outline" style="display: none;">
+                    <i class="fas fa-info-circle"></i> More Information About This Result
+                </button>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <p><strong>Image stored at:</strong> <a id="imageLink" href="#" target="_blank">View Original Image</a></p>
+            </div>
+        </div>
+
+        <!-- Information Modal -->
+        <div id="infoModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="modalTitle">Tumor Information</h3>
+                    <span class="close-modal">&times;</span>
+                </div>
+                <div class="modal-body" id="modalContent">
+                    <!-- Content will be loaded here -->
                 </div>
             </div>
         </div>
+
+        <!-- Features Grid -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-upload"></i>
+                </div>
+                <h3>Upload MRI Scan</h3>
+                <p>Upload your brain MRI scan for tumor detection analysis</p>
+                <span class="coming-soon">Active</span>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-file-medical"></i>
+                </div>
+                <h3>View Results</h3>
+                <p>Check your previous scan results and reports</p>
+                <span class="coming-soon">Coming Soon</span>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-user-cog"></i>
+                </div>
+                <h3>Profile Settings</h3>
+                <p>Update your personal information and preferences</p>
+                <span class="coming-soon">Coming Soon</span>
+            </div>
+        </div>
     </div>
-</body>
-</html>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const uploadForm = document.getElementById('uploadForm');
+        const analyzeStep = document.querySelector('.analyze-step');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const messageDiv = document.getElementById('message');
+        const uploadedPreview = document.getElementById('uploadedPreviewImage');
+        const fileInput = document.getElementById('mriScan');
+        const resultsDiv = document.getElementById('results');
+        const resultContent = document.getElementById('resultContent');
+        const resultIcon = document.getElementById('resultIcon');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultSubtitle = document.getElementById('resultSubtitle');
+        const imageLink = document.getElementById('imageLink');
+        const moreInfoBtn = document.getElementById('moreInfoBtn');
+        const infoModal = document.getElementById('infoModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        const closeModal = document.querySelector('.close-modal');
+        
+        // Probability elements
+        const gliomaProb = document.getElementById('gliomaProbability');
+        const meningiomaProb = document.getElementById('meningiomaProbability');
+        const notumorProb = document.getElementById('notumorProbability');
+        const pituitaryProb = document.getElementById('pituitaryProbability');
+        
+        let currentAnalysisId = null;
+        let currentTumorType = null;
+        
+        // Preview image when selected
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedPreview.src = e.target.result;
+                    document.getElementById('uploadedImagePreview').style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Handle upload form submission
+        uploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            
+            // Show loading message
+            showMessage('Uploading image...', 'info');
+            
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('Upload successful! Click "Analyze" to process the image.', 'success');
+                    currentAnalysisId = data.analysis_id;
+                    analyzeStep.style.display = 'block';
+                    uploadedPreview.src = data.image_url;
+                } else {
+                    showMessage(`Error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showMessage('Network error. Please try again.', 'error');
+            }
+        });
+        
+        // Handle analyze button click
+        analyzeBtn.addEventListener('click', async function() {
+            if (!currentAnalysisId) {
+                showMessage('Please upload an image first.', 'error');
+                return;
+            }
+            
+            showMessage('Analyzing image... This may take a moment.', 'info');
+            
+            try {
+                const response = await fetch(`/api/analyze/${currentAnalysisId}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('Analysis complete!', 'success');
+                    displayResults(data);
+                } else {
+                    showMessage(`Error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showMessage('Network error. Please try again.', 'error');
+            }
+        });
+        
+        // Handle More Info button click
+        moreInfoBtn.addEventListener('click', function() {
+            showTumorInfo(currentTumorType);
+        });
+        
+        // Close modal when clicking on X
+        closeModal.addEventListener('click', function() {
+            infoModal.style.display = 'none';
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === infoModal) {
+                infoModal.style.display = 'none';
+            }
+        });
+        
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `alert alert-${type}`;
+            messageDiv.style.display = 'block';
+        }
+        
+        function displayResults(data) {
+            const analysis = data.analysis;
+            currentTumorType = analysis.tumor_type;
+            
+            // Update probability values
+            gliomaProb.textContent = `${(analysis.probabilities.glioma * 100).toFixed(2)}%`;
+            meningiomaProb.textContent = `${(analysis.probabilities.meningioma * 100).toFixed(2)}%`;
+            notumorProb.textContent = `${(analysis.probabilities.notumor * 100).toFixed(2)}%`;
+            pituitaryProb.textContent = `${(analysis.probabilities.pituitary * 100).toFixed(2)}%`;
+            
+            // Set image link
+            imageLink.href = analysis.image_url;
+            
+            if (analysis.has_tumor) {
+                // Tumor detected
+                resultsDiv.className = 'result-positive';
+                resultIcon.className = 'result-icon positive-icon';
+                resultIcon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                resultTitle.textContent = 'Tumor Detected';
+                resultTitle.style.color = 'var(--danger)';
+                resultSubtitle.textContent = `${analysis.tumor_type.toUpperCase()} - Confidence: ${(analysis.confidence * 100).toFixed(2)}%`;
+                
+                resultContent.innerHTML = `
+                    <div style="color: var(--danger); font-weight: bold; margin-bottom: 15px;">
+                        <p>🚨 Our analysis has detected a potential tumor in your MRI scan.</p>
+                    </div>
+                    <p>Please consult with a medical professional for further evaluation and treatment options.</p>
+                `;
+                
+                // Show More Info button
+                moreInfoBtn.style.display = 'block';
+            } else {
+                // No tumor detected
+                resultsDiv.className = 'result-negative';
+                resultIcon.className = 'result-icon negative-icon';
+                resultIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                resultTitle.textContent = 'No Tumor Detected';
+                resultTitle.style.color = 'var(--success)';
+                resultSubtitle.textContent = `Confidence: ${(analysis.confidence * 100).toFixed(2)}%`;
+                
+                resultContent.innerHTML = `
+                    <div style="color: var(--success); font-weight: bold; margin-bottom: 15px;">
+                        <p>✅ No signs of tumor detected in your MRI scan.</p>
+                    </div>
+                    <p>This is a positive result, but regular check-ups are still recommended.</p>
+                `;
+                
+                // Hide More Info button
+                moreInfoBtn.style.display = 'none';
+            }
+            
+            resultsDiv.style.display = 'block';
+            
+            // Scroll to results
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function showTumorInfo(tumorType) {
+            // Show modal with loading state
+            infoModal.style.display = 'block';
+            modalTitle.textContent = `Loading information about ${tumorType}...`;
+            modalContent.innerHTML = `
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                </div>
+                <p style="text-align: center;">Fetching information from Gemini AI...</p>
+            `;
+            
+            // Fetch tumor information from API
+            fetch(`/api/tumor-info/${tumorType}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        modalTitle.textContent = `About ${tumorType}`;
+                        modalContent.innerHTML = renderMarkdown(data.information);
+                    } else {
+                        modalContent.innerHTML = `
+                            <div class="alert alert-error">
+                                <p>Error: ${data.error}</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    modalContent.innerHTML = `
+                        <div class="alert alert-error">
+                            <p>Error loading information: ${error.message}</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        function renderMarkdown(text) {
+            // Simple markdown parser for basic formatting
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // bold
+                .replace(/\*(.*?)\*/g, '<em>$1</em>') // italic
+                .replace(/^# (.*$)/gim, '<h1>$1</h1>') // h1
+                .replace(/^## (.*$)/gim, '<h2>$1</h2>') // h2
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>') // h3
+                .replace(/\n/g, '<br>') // line breaks
+                .replace(/```([^`]+)```/g, '<pre><code>$1</code></pre>') // code blocks
+                .replace(/`([^`]+)`/g, '<code>$1</code>'); // inline code
+        }
+    });
+</script>
+{% endblock %}
+
+{% block footer %}
+<!-- Import the footer content -->
+{% include "footer.html" %}
+{% endblock %}
