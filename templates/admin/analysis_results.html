@@ -1,0 +1,225 @@
+{% extends "admin/base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #4e73df;
+            --primary-dark: #3a56c7;
+            --secondary: #6f42c1;
+            --success: #1cc88a;
+            --info: #36b9cc;
+            --warning: #f6c23e;
+            --danger: #e74a3b;
+            --light: #f8f9fc;
+            --dark: #5a5c69;
+            --gray-100: #f8f9fc;
+            --gray-200: #eaecf4;
+            --gray-300: #dddfeb;
+            --gray-400: #d1d3e2;
+        }
+        
+        body {
+            background-color: var(--gray-100);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        
+        .dashboard-header {
+            color: var(--primary);
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            position: relative;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .dashboard-header:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+        
+        .dashboard-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 0.3rem 1.2rem rgba(58, 59, 69, 0.15);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 2rem rgba(58, 59, 69, 0.2);
+        }
+        
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            color: var(--dark);
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--gray-300);
+        }
+        
+        .table-container {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .table thead {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+        
+        .table th {
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            padding: 1rem 0.75rem;
+            border: none;
+        }
+        
+        .table td {
+            padding: 1rem 0.75rem;
+            vertical-align: middle;
+            border-color: var(--gray-300);
+        }
+        
+        .table-hover tbody tr {
+            transition: background-color 0.2s;
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.08);
+        }
+        
+        .probability-cell {
+            font-weight: 600;
+        }
+        
+        .glioma-cell {
+            color: var(--danger);
+        }
+        
+        .meningioma-cell {
+            color: var(--warning);
+        }
+        
+        .pituitary-cell {
+            color: var(--info);
+        }
+        
+        .notumor-cell {
+            color: var(--success);
+        }
+        
+        .tumor-type-badge {
+            padding: 0.4em 0.8em;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .confidence-badge {
+            padding: 0.4em 0.8em;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mri-image {
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .mri-image:hover {
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 1200px) {
+            .table-container {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Content -->
+    <div class="container-fluid">
+        <h2 class="mb-4 text-center dashboard-header">Analysis Results</h2>
+
+        <div class="card dashboard-card">
+            <div class="card-body">
+                <h5 class="card-title mb-4">
+                    <i class="bi bi-clipboard-data text-primary"></i> MRI Analysis Records
+                </h5>
+
+                <div class="table-responsive table-container">
+                    <table class="table table-striped table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Image</th>
+                                <th>Tumor Type</th>
+                                <th>Confidence</th>
+                                <th>Glioma %</th>
+                                <th>Meningioma %</th>
+                                <th>Pituitary %</th>
+                                <th>No Tumor %</th>
+                                <th>Created At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for analysis in analyses %}
+                            <tr>
+                                <td class="fw-medium">{{ analysis.user_name }}</td>
+                                <td>{{ analysis.user_email }}</td>
+                                <td><img src="{{ analysis.image_url }}" alt="MRI" width="100" class="mri-image"></td>
+                                <td>
+                                    {% if analysis.tumor_type == "Glioma" %}
+                                        <span class="tumor-type-badge bg-danger">{{ analysis.tumor_type }}</span>
+                                    {% elif analysis.tumor_type == "Meningioma" %}
+                                        <span class="tumor-type-badge bg-warning text-dark">{{ analysis.tumor_type }}</span>
+                                    {% elif analysis.tumor_type == "Pituitary" %}
+                                        <span class="tumor-type-badge bg-info text-dark">{{ analysis.tumor_type }}</span>
+                                    {% else %}
+                                        <span class="tumor-type-badge bg-success">{{ analysis.tumor_type }}</span>
+                                    {% endif %}
+                                </td>
+                                <td><span class="confidence-badge bg-primary">{{ analysis.confidence }}</span></td>
+                                <td class="probability-cell glioma-cell">{{ analysis.glioma_probability }}</td>
+                                <td class="probability-cell meningioma-cell">{{ analysis.meningioma_probability }}</td>
+                                <td class="probability-cell pituitary-cell">{{ analysis.pituitary_probability }}</td>
+                                <td class="probability-cell notumor-cell">{{ analysis.notumor_probability }}</td>
+                                <td>{{ analysis.created_at }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+{% endblock %}

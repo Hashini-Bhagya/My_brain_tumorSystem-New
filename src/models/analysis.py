@@ -16,6 +16,9 @@ class AnalysisResult(db.Model):
     pituitary_probability = db.Column(db.Float, default=0.0)
     created_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
     
+# ✅ Add this relationship
+    user = db.relationship("User", back_populates="analysis_results")
+
     def to_dict(self):
         return {
             'id': self.id,

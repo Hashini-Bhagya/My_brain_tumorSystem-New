@@ -32,4 +32,23 @@ CREATE TABLE analysis_result (
     FOREIGN KEY (user_id) REFERENCES users(id)  -- Changed from user(id) to users(id)
 );
 
+
+-- Create admin table
+CREATE TABLE IF NOT EXISTS admins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Add is_blocked column to users table
+ALTER TABLE users 
+ADD COLUMN is_blocked BOOLEAN DEFAULT FALSE;
+
+INSERT INTO admins (email, password_hash, name) 
+VALUES ('admin@braintumor.com', 'admin123', 'System Administrator');
+
 SHOW TABLES;   

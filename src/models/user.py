@@ -25,6 +25,8 @@ class User(UserMixin, db.Model):
     # Add relationship to AnalysisResult
     analyses = db.relationship('AnalysisResult', backref='users', lazy=True)
 
+    analysis_results = db.relationship("AnalysisResult", back_populates="user")
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -37,3 +39,7 @@ class User(UserMixin, db.Model):
             # For OAuth users who don't have a password
             return False
         return check_password_hash(self.password_hash, password) 
+    
+    def get_id(self) -> str:
+        # ✅ typed session id
+        return f"user:{self.id}"

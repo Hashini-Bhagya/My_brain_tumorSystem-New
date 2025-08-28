@@ -83,6 +83,7 @@ def login():
     
     return render_template('login.html', form=form)
 
+
 @api_bp.route('/logout')
 @login_required
 def logout():

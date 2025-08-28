@@ -1,12 +1,15 @@
+import sys
 from flask import Flask, request, jsonify
 from config import Config
 from src.utils.db import db, test_database_connection
 from src.routes.api import api_bp
 from src.routes.main_routes import main_bp
+from src.routes.admin_routes import admin_bp 
 from flask_login import LoginManager
 from src.utils._init_ import create_app
 import os
 from dotenv import load_dotenv
+from src.utils.init_admin import init_admin
 
 load_dotenv()
 
@@ -36,6 +39,7 @@ def check_google_config():
                     print(f"  GOOGLE_CLIENT_SECRET=******")
 
 check_google_config()
+
 
 if __name__ == "__main__":
     app = create_app()
