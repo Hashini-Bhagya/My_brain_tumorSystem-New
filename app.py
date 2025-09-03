@@ -13,7 +13,7 @@ from src.utils.init_admin import init_admin
 
 load_dotenv()
 
-# Add this debug section
+# debug section
 def check_google_config():
     print("=== GOOGLE OAUTH CONFIGURATION CHECK ===")
     client_id = os.environ.get('GOOGLE_CLIENT_ID')

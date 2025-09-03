@@ -11,6 +11,10 @@ def home():
 def about():
     return render_template("about.html")
 
+@main_bp.route("/contact")
+def contact():
+    return render_template("contact.html")
+
 @main_bp.route("/login")
 def login():
     return redirect(url_for("api.login"))

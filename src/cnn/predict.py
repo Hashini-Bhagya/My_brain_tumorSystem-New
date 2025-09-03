@@ -9,7 +9,7 @@ import cv2
 class TumorDetector:
     def __init__(self, model_path):
         self.model = tf.keras.models.load_model(model_path)
-        self.img_size = (150, 150)  # Based on your training model
+        self.img_size = (150, 150)  
         self.class_names = ['glioma', 'meningioma', 'notumor', 'pituitary']
         
     def preprocess_image(self, image_url):
