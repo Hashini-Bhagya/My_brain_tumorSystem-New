@@ -1,8 +1,14 @@
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash
+from flask import Blueprint, render_template, request, jsonify, redirect, session, url_for, flash
 from flask_login import login_required, logout_user, current_user, login_user
+# from controllers import admin_controller
 from src.forms.admin_forms import AdminLoginForm
-from src.controllers.admin_controller import AdminController
+from src.controllers import admin_controller
+from src.controllers.admin_controller import AdminController, add_reply_to_message, get_message_with_replies
 from src.models.admin import Admin
+from src.forms.admin_forms import ReplyForm
+#from forms.admin_forms import ReplyForm
+from src.utils.db import db
+#from utils import db
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -95,3 +101,58 @@ def api_get_analyses():
     """API endpoint to get all analyses"""
     analyses = AdminController.get_all_analyses()
     return jsonify(analyses)
+
+#for mg box
+
+@admin_bp.route('/messages')
+@admin_login_required
+def messages():
+    try:
+        # Make sure you're importing the correct Message model
+        from src.models.admin import Message
+        messages = Message.query.order_by(Message.created_at.desc()).all()
+        print(f"Found {len(messages)} messages")  # Debug print
+        return render_template('admin/messages.html', messages=messages)
+    except Exception as e:
+        print(f"Error retrieving messages: {e}")
+        return render_template('admin/messages.html', messages=[])
+
+
+@admin_bp.route('/message/<int:message_id>', methods=['GET', 'POST'])
+@admin_login_required
+def view_message(message_id):
+    print(f"Attempting to view message with ID: {message_id}")
+    
+    message = get_message_with_replies(message_id)
+    
+    # Check if message exists
+    if message is None:
+        print(f"Message with ID {message_id} not found!")
+        flash('Message not found!', 'danger')
+        return redirect(url_for('admin.messages'))
+    
+    print(f"Found message: {message.id}, {message.subject}")
+    
+    form = ReplyForm()
+    
+    if form.validate_on_submit():
+        # Use current_user.id instead of session['admin_id']
+        # current_user is provided by Flask-Login and is already authenticated
+        admin_id = current_user.id
+        if add_reply_to_message(
+            message_id, 
+            admin_id,  # Use current_user.id
+            form.reply_text.data
+        ):
+            flash('Reply sent successfully!', 'success')
+            return redirect(url_for('admin.view_message', message_id=message_id))
+        else:
+            flash('Error sending reply. Please try again.', 'danger')
+    
+    # Mark message as read when admin views it
+    if message and message.status == 'new':
+        message.status = 'read'
+        db.session.commit()
+        print(f"Message status updated to 'read'")
+    
+    return render_template('admin/message_detail.html', message=message, form=form)

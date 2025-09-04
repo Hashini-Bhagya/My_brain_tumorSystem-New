@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Email, Length
 
 class AdminLoginForm(FlaskForm):
@@ -9,3 +9,13 @@ class AdminLoginForm(FlaskForm):
 
 class BlockUserForm(FlaskForm):
     is_blocked = BooleanField('Block User')
+
+
+    #for mg 
+
+class ReplyForm(FlaskForm):
+    reply_text = TextAreaField('Reply', validators=[
+        DataRequired(message='Reply message is required'),
+        Length(min=10, message='Reply must be at least 10 characters long')
+    ])
+    submit = SubmitField('Send Reply')   

@@ -85,4 +85,61 @@ class AdminController:
             })
         return result
 
+    #for mg box
+
+def get_all_messages():
+    try:
+        messages = Admin.get_all_messages()
+        return messages
+    except Exception as e:
+        print(f"Error retrieving messages: {e}")
+        return []
+
+def get_message_with_replies(message_id):
+    try:
+        # Make sure you're importing the correct Message model
+        from src.models.admin import Message
+        message = Message.query.get(message_id)
+        
+        if message:
+            print(f"Message found: ID {message.id}, Subject: {message.subject}")
+            # Eager load replies to avoid N+1 query issue
+            message = Message.query.options(db.joinedload(Message.replies)).get(message_id)
+        else:
+            print(f"Message with ID {message_id} not found in database")
+            
+        return message
+    except Exception as e:
+        print(f"Error retrieving message: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
     
+def add_reply_to_message(message_id, admin_id, reply_text):
+    try:
+        from src.models.admin import MessageReply, Message
+        
+        # Create the reply
+        reply = MessageReply(
+            message_id=message_id,
+            admin_id=admin_id,
+            reply_text=reply_text
+        )
+        
+        db.session.add(reply)
+        
+        # Update message status to 'replied'
+        message = Message.query.get(message_id)
+        if message:
+            message.status = 'replied'
+        
+        db.session.commit()
+        return True
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error adding reply: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
