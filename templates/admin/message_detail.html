@@ -1,109 +1,230 @@
 {% extends "admin/base.html" %}
-
 {% block content %}
-{% if message is none %}
-<div class="container-fluid">
-    <div class="alert alert-danger">
-        <h4>Message Not Found</h4>
-        <p>The requested message could not be found.</p>
-        <a href="{{ url_for('admin.messages') }}" class="btn btn-primary">Back to Messages</a>
-    </div>
-</div>
-{% else %}
-<!-- Your existing template content here -->
-<div class="container-fluid">
-    <h1 class="mt-4">Message Details</h1>
-    
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-envelope mr-1"></i>
-                    Message from {{ message.name }}
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <strong>From:</strong> {{ message.name }} ({{ message.email }})<br>
-                        <strong>Date:</strong> {{ message.created_at.strftime('%Y-%m-%d %H:%M') }}<br>
-                        <strong>Subject:</strong> {{ message.subject }}
-                    </div>
-                    
-                    <div class="border p-3 bg-light rounded">
-                       {{ message.message }}
-                    </div>
-                </div>
-            </div>
-            
-            {% if message.replies %}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-reply mr-1"></i>
-                    Admin Replies
-                </div>
-                <div class="card-body">
-                    {% for reply in message.replies|sort(attribute='created_at') %}
-                    <div class="mb-3 p-3 border rounded bg-white">
-                        <div class="d-flex justify-content-between">
-                            <strong>Admin: {{ reply.admin.name }}</strong>
-                            <span class="text-muted">{{ reply.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
-                        </div>
-                        <div class="mt-2">
-                            {{ reply.reply_text }}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
-            
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-reply mr-1"></i>
-                    Send Reply
-                </div>
-                <div class="card-body">
-                    <form method="POST">
-                        {{ form.hidden_tag() }}
-                        
-                        <div class="form-group">
-                            {{ form.reply_text.label }}
-                            {{ form.reply_text(class="form-control", rows=5) }}
-                            {% for error in form.reply_text.errors %}
-                                <span class="text-danger">{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-paper-plane"></i> Send Reply
-                        </button>
-                    </form>
-                </div>
-            </div>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Details - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4e73df;
+            --primary-dark: #3a56c7;
+            --secondary: #6f42c1;
+            --success: #1cc88a;
+            --info: #36b9cc;
+            --warning: #f6c23e;
+            --danger: #e74a3b;
+            --light: #f8f9fc;
+            --dark: #5a5c69;
+            --gray-100: #f8f9fc;
+            --gray-200: #eaecf4;
+            --gray-300: #dddfeb;
+        }
+
+        body {
+            background-color: var(--gray-100);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .dashboard-header {
+            color: var(--primary);
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            position: relative;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .dashboard-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 0.3rem 1.2rem rgba(58, 59, 69, 0.15);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .dashboard-card .card-header {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-weight: 600;
+        }
+
+        .dashboard-card .card-body {
+            background: #fff;
+        }
+
+        .badge {
+            font-size: 0.8em;
+            padding: 0.5em 0.8em;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .reply-box {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .reply-item {
+            background: white;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .reply-item:hover {
+            box-shadow: 0 0.4rem 1rem rgba(0,0,0,0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--dark);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--gray-300);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        {% if message is none %}
+        <div class="alert alert-danger text-center">
+            <h4>Message Not Found</h4>
+            <p>The requested message could not be found.</p>
+            <a href="{{ url_for('admin.messages') }}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Back to Messages
+            </a>
         </div>
+        {% else %}
         
-        <div class="col-lg-4">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-info-circle mr-1"></i>
-                    Message Information
+        <h2 class="text-center text-uppercase fw-bold dashboard-header">Message Details</h2>
+        
+        <div class="row">
+            <!-- Left column -->
+            <div class="col-lg-8">
+                <div class="card dashboard-card">
+                    <div class="card-header">
+                        <i class="fas fa-envelope me-2"></i> Message from {{ message.name }}
+                    </div>
+                    <div class="card-body">
+                        <p><strong>From:</strong> {{ message.name }} ({{ message.email }})</p>
+                        <p><strong>Date:</strong> {{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                        <p><strong>Subject:</strong> {{ message.subject }}</p>
+                        <div class="reply-box mt-3">
+                            {{ message.message }}
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <p><strong>Status:</strong> 
-                        <span class="badge badge-{{ 'primary' if message.status == 'new' else 'secondary' if message.status == 'read' else 'success' }}">
-                            {{ message.status|title }}
-                        </span>
-                    </p>
-                    <p><strong>Email:</strong> {{ message.email }}</p>
-                    <p><strong>Received:</strong> {{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
-                    
-                    <hr>
-                    <a href="mailto:{{ message.email }}?subject=Re: {{ message.subject }}" class="btn btn-outline-primary btn-block">
-                        <i class="fas fa-envelope"></i> Reply via Email
-                    </a>
+
+                {% if message.replies %}
+                <div class="card dashboard-card">
+                    <div class="card-header">
+                        <i class="fas fa-reply me-2"></i> Admin Replies
+                    </div>
+                    <div class="card-body">
+                        {% for reply in message.replies|sort(attribute='created_at') %}
+                        <div class="reply-item">
+                            <div class="d-flex justify-content-between">
+                                <strong>Admin: {{ reply.admin.name }}</strong>
+                                <span class="text-muted">{{ reply.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                            </div>
+                            <div class="mt-2">{{ reply.reply_text }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="card dashboard-card">
+                    <div class="card-header">
+                        <i class="fas fa-reply me-2"></i> Send Reply
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {{ form.hidden_tag() }}
+                            <div class="mb-3">
+                                {{ form.reply_text.label(class="form-label fw-bold") }}
+                                {{ form.reply_text(class="form-control", rows=5) }}
+                                {% for error in form.reply_text.errors %}
+                                    <span class="text-danger">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-1"></i> Send Reply
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right column -->
+            <div class="col-lg-4">
+                <div class="card dashboard-card">
+                    <div class="card-header">
+                        <i class="fas fa-info-circle me-2"></i> Message Information
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Status:</strong> 
+                            {% if message.status == 'new' %}
+                                <span class="badge bg-primary">New</span>
+                            {% elif message.status == 'read' %}
+                                <span class="badge bg-secondary">Read</span>
+                            {% elif message.status == 'replied' %}
+                                <span class="badge bg-success">Replied</span>
+                            {% endif %}
+                        </p>
+                        <p><strong>Email:</strong> {{ message.email }}</p>
+                        <p><strong>Received:</strong> {{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                        <hr>
+                        <a href="mailto:{{ message.email }}?subject=Re: {{ message.subject }}" 
+                           class="btn btn-outline-primary w-100">
+                            <i class="fas fa-envelope me-1"></i> Reply via Email
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
-</div>
-{% endif %}
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
 {% endblock %}

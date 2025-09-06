@@ -108,7 +108,7 @@ def api_get_analyses():
 @admin_login_required
 def messages():
     try:
-        # Make sure you're importing the correct Message model
+        
         from src.models.admin import Message
         messages = Message.query.order_by(Message.created_at.desc()).all()
         print(f"Found {len(messages)} messages")  # Debug print
