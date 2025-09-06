@@ -6,6 +6,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 <style>
     :root {
         --primary: #2563eb;
@@ -425,7 +427,7 @@
     </div>
 </section>
 
-<!-- Team Section -->
+<!-- Team Section 
 <section class="team-section">
     <div class="container">
         <div class="section-title" data-aos="fade-up" data-aos-duration="800">
@@ -457,6 +459,8 @@
         </div>
     </div>
 </section>
+
+-->
 
 <!-- Values Section -->
 <section class="values-section">
@@ -535,6 +539,48 @@
         });
     });
 </script>
+
+<script>
+    (function() {
+        if (!window.chatbase || window.chatbase("getState") !== "initialized") {
+            window.chatbase = (...arguments) => {
+                if (!window.chatbase.q) {
+                    window.chatbase.q = []
+                }
+                window.chatbase.q.push(arguments)
+            };
+            window.chatbase = new Proxy(window.chatbase, {
+                get(target, prop) {
+                    if (prop === "q") {
+                        return target.q
+                    }
+                    return (...args) => target(prop, ...args)
+                }
+            })
+        }
+        const onLoad = function() {
+            const script = document.createElement("script");
+            script.src = "https://www.chatbase.co/embed.min.js";
+            script.id = "UrNy35TOL9iDi6C-kRSTM";
+            script.domain = "www.chatbase.co";
+            document.body.appendChild(script)
+        };
+        if (document.readyState === "complete") {
+            onLoad()
+        } else {
+            window.addEventListener("load", onLoad)
+        }
+    })();
+</script>
+<script>
+    const crypto = require('crypto');
+
+    const secret = 'UrNy35TOL9iDi6C-kRSTM'; 
+    const userId = current_user.id 
+
+    const hash = crypto.createHmac('sha256', secret).update(userId).digest('hex');
+</script>
+
 {% endblock %}
 
 {% block footer %}

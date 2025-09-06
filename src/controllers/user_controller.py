@@ -1,7 +1,9 @@
+#from mailbox import Message
 from src.models.user import User #new
 from src.utils.db import db #new
 from src.models.user import User, db
 from flask_login import login_user
+from src.models.admin import Message
 
 class UserController:
     @staticmethod
@@ -57,3 +59,29 @@ class UserController:
     @staticmethod
     def get_user_by_id(user_id):
         return User.query.get(user_id)
+    
+    #mg
+    
+@staticmethod
+def save_contact_message(name, email, subject, message):
+    try:
+        print(f"Attempting to save message: {name}, {email}, {subject}")
+        new_message = Message()
+        new_message.name = name
+        new_message.email = email
+        new_message.subject = subject
+        new_message.message = message
+        new_message.status = 'new'
+        
+        db.session.add(new_message)
+        print("Message object added to session")
+
+        db.session.commit()
+        print(f"Message saved successfully: ID {new_message.id}")
+        return True
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error saving message: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
